@@ -1,61 +1,54 @@
 package com.naturagarden.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.naturagarden.dto.PlantaRequestDTO;
+import com.naturagarden.dto.PlantaResponseDTO;
+import com.naturagarden.service.PlantaService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.naturagarden.model.Planta;
-import com.naturagarden.repository.PlantaRepository;
 
-import java.util.List;
-import java.util.Optional;
-
-    @AllArgsConstructor
-    @NoArgsConstructor
     @RestController
-    @RequestMapping("/plantas") // URL base dos endpoints
+    @RequestMapping("/plantas")
+    @RequiredArgsConstructor
     public class PlantaController {
 
-        @Autowired
-        private PlantaRepository plantaRepository;
+        private final PlantaService plantaService;
 
-        // 🔹 1. Listar todas as plantas (GET)
-        @GetMapping
-        public List<Planta> listarTodas() {
-            return plantaRepository.findAll();
-        }
-
-        // 🔹 2. Buscar planta por ID (GET)
-        @GetMapping("/{id}")
-        public Optional<Planta> buscarPorId(@PathVariable Long id) {
-            return plantaRepository.findById(id);
-        }
-
-        // 🔹 3. Cadastrar nova planta (POST)
         @PostMapping
-        public Planta cadastrar(@RequestBody Planta planta) {
-            return plantaRepository.save(planta);
+        public ResponseEntity<PlantaResponseDTO> criar(@RequestBody @Valid PlantaRequestDTO dto) {
+            PlantaResponseDTO planta = plantaService.criar(dto);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(planta);
         }
 
-        // 🔹 4. Atualizar planta existente (PUT)
+        @GetMapping
+        public ResponseEntity<Page<PlantaResponseDTO>> listar(Pageable pageable) {
+            Page<PlantaResponseDTO> plantas = plantaService.listar(pageable);
+            return ResponseEntity.ok(plantas);
+        }
+
+        @GetMapping("/{id}")
+        public ResponseEntity<PlantaResponseDTO> buscarPorId(@PathVariable Long id) {
+            PlantaResponseDTO planta = plantaService.buscarPorId(id);
+            return ResponseEntity.ok(planta);
+        }
+
         @PutMapping("/{id}")
-        public Planta atualizar(@PathVariable Long id, @RequestBody Planta novaPlanta) {
-            return plantaRepository.findById(id)
-                    .map(planta -> {
-                        planta.setNome(novaPlanta.getNome());
-                        planta.setPreco(novaPlanta.getPreco());
-                        planta.setAmbiente(novaPlanta.getAmbiente());
-                        return plantaRepository.save(planta);
-                    })
-                    .orElseThrow(() -> new RuntimeException("Planta não encontrada!"));
+        public ResponseEntity<PlantaResponseDTO> atualizar(@PathVariable Long id, @RequestBody @Valid PlantaRequestDTO dto){
+            PlantaResponseDTO planta = plantaService.atualizar(id, dto);
+            return ResponseEntity.ok(planta);
         }
 
-        // 🔹 5. Deletar planta (DELETE)
         @DeleteMapping("/{id}")
-        public String deletar(@PathVariable Long id) {
-            plantaRepository.deleteById(id);
-            return "Planta deletada com sucesso!";
+        public ResponseEntity<Void> deletar(@PathVariable Long id) {
+           plantaService.deletar(id);
+            return ResponseEntity.noContent().build();
         }
     }
 
