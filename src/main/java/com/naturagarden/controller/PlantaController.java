@@ -1,7 +1,8 @@
 package com.naturagarden.controller;
 
-import com.naturagarden.dto.PlantaRequestDTO;
+import com.naturagarden.dto.PlantaCreateDTO;
 import com.naturagarden.dto.PlantaResponseDTO;
+import com.naturagarden.dto.PlantaUpdateDTO;
 import com.naturagarden.service.PlantaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
         private final PlantaService plantaService;
 
         @PostMapping
-        public ResponseEntity<PlantaResponseDTO> criar(@RequestBody @Valid PlantaRequestDTO dto) {
+        public ResponseEntity<PlantaResponseDTO> criar(@RequestBody @Valid PlantaCreateDTO dto) {
             PlantaResponseDTO planta = plantaService.criar(dto);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
@@ -40,7 +41,7 @@ import org.springframework.web.bind.annotation.*;
         }
 
         @PutMapping("/{id}")
-        public ResponseEntity<PlantaResponseDTO> atualizar(@PathVariable Long id, @RequestBody @Valid PlantaRequestDTO dto){
+        public ResponseEntity<PlantaResponseDTO> atualizar(@PathVariable Long id, @RequestBody @Valid PlantaUpdateDTO dto){
             PlantaResponseDTO planta = plantaService.atualizar(id, dto);
             return ResponseEntity.ok(planta);
         }

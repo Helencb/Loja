@@ -1,19 +1,17 @@
 package com.naturagarden.mapper;
 
-import com.naturagarden.dto.PlantaRequestDTO;
+import com.naturagarden.dto.PlantaCreateDTO;
 import com.naturagarden.dto.PlantaResponseDTO;
+import com.naturagarden.dto.PlantaUpdateDTO;
 import com.naturagarden.model.Planta;
-import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface PlantaMapper {
-    Planta toEntity(PlantaRequestDTO dto);
+    Planta toEntity(PlantaCreateDTO dto);
 
     PlantaResponseDTO toResponseDTO(Planta planta);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updatePlantaFromDto(PlantaRequestDTO dto, @MappingTarget Planta planta);
+    void updateEntity(PlantaUpdateDTO dto, @MappingTarget Planta planta);
 }
