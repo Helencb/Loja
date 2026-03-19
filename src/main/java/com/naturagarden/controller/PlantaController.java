@@ -1,5 +1,6 @@
 package com.naturagarden.controller;
 
+import com.naturagarden.dto.ApiResponse;
 import com.naturagarden.dto.PlantaCreateDTO;
 import com.naturagarden.dto.PlantaResponseDTO;
 import com.naturagarden.dto.PlantaUpdateDTO;
@@ -13,7 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.*;
 
-    @RestController
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@RestController
     @RequestMapping("/plantas")
     @RequiredArgsConstructor
     public class PlantaController {
@@ -21,11 +25,18 @@ import org.springframework.web.bind.annotation.*;
         private final PlantaService plantaService;
 
         @PostMapping
-        public ResponseEntity<PlantaResponseDTO> criar(@RequestBody @Valid PlantaCreateDTO dto) {
+        public ResponseEntity<ApiResponse<PlantaResponseDTO>> criar(@RequestBody @Valid PlantaCreateDTO dto) {
             PlantaResponseDTO planta = plantaService.criar(dto);
+            ApiResponse<PlantaResponseDTO> response = ApiResponse.<PlantaResponseDTO>builder()
+                    .success(true)
+                    .message("Planta criada com sucesso")
+                    .data(planta)
+                    .timestamp(LocalDateTime.now())
+                    .build();
+
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(planta);
+                    .body(response);
         }
 
         @GetMapping
@@ -35,19 +46,19 @@ import org.springframework.web.bind.annotation.*;
         }
 
         @GetMapping("/{id}")
-        public ResponseEntity<PlantaResponseDTO> buscarPorId(@PathVariable Long id) {
+        public ResponseEntity<PlantaResponseDTO> buscarPorId(@PathVariable UUID id) {
             PlantaResponseDTO planta = plantaService.buscarPorId(id);
             return ResponseEntity.ok(planta);
         }
 
         @PutMapping("/{id}")
-        public ResponseEntity<PlantaResponseDTO> atualizar(@PathVariable Long id, @RequestBody @Valid PlantaUpdateDTO dto){
+        public ResponseEntity<PlantaResponseDTO> atualizar(@PathVariable UUID id, @RequestBody @Valid PlantaUpdateDTO dto){
             PlantaResponseDTO planta = plantaService.atualizar(id, dto);
             return ResponseEntity.ok(planta);
         }
 
         @DeleteMapping("/{id}")
-        public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        public ResponseEntity<Void> deletar(@PathVariable UUID id) {
            plantaService.deletar(id);
             return ResponseEntity.noContent().build();
         }

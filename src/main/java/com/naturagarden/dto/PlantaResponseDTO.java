@@ -1,9 +1,10 @@
 package com.naturagarden.dto;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record PlantaResponseDTO (
-        Long id,
+        UUID id,
         String nome,
         BigDecimal preco,
         String ambiente
