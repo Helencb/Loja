@@ -13,7 +13,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface ClienteMapper{
     Cliente toEntity(ClienteCreateDTO dto);
 
-    ClienteResponseDTO toResponseDto(Cliente cliente);
+    ClienteResponseDTO toResponseDTO(Cliente cliente);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntity(ClienteUpdateDTO dto, @MappingTarget Cliente cliente);
